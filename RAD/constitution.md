@@ -99,7 +99,7 @@ All changes must remain testable through the existing project build and test wor
 
 The approved artifact catalog is located at:
 
-.foundation/artifacts/catalog.yaml
+.foundation/catalog.yaml
 
 Artifact-specific information is located under:
 

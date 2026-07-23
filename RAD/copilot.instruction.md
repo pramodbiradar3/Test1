@@ -9,7 +9,7 @@ Before implementing or modifying any code, you MUST inspect the approved artifac
 The approved artifact catalog is located at:
 
 ```text
-.foundation/artifacts/catalog.yaml
+.foundation/catalog.yaml
 ```
 
 Artifact contracts are located under:
@@ -31,7 +31,7 @@ For every requirement, before writing or modifying implementation code:
 3. Read and inspect:
 
    ```text
-   .foundation/artifacts/catalog.yaml
+   .foundation/catalog.yaml
    ```
 
 4. For each required capability, determine whether an approved artifact exists in the catalog.
@@ -45,6 +45,7 @@ For every requirement, before writing or modifying implementation code:
      ```
 
    * Read and understand the complete artifact contract.
+   * Read and understand the complete artifact README.md.
    * Use the approved artifact according to its contract.
 
 6. Repeat this process for every applicable capability.
@@ -178,7 +179,7 @@ Do not begin implementation until the following checks are complete:
 
 * [ ] The requirement has been analyzed.
 * [ ] All required technical capabilities have been identified.
-* [ ] .foundation/artifacts/catalog.yaml has been inspected.
+* [ ] .foundation/catalog.yaml has been inspected.
 * [ ] All applicable approved artifacts have been identified.
 * [ ] The corresponding artifact contracts have been located.
 * [ ] All applicable artifact contracts have been read.
