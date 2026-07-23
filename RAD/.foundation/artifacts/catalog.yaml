@@ -1,0 +1,9 @@
+apiVersion: foundation.myorg/v1
+kind: ArtifactCatalog
+
+artifacts:
+
+  - name: foundations-persistence
+    capability: persistence
+    contract: .foundation/artifacts/foundations-persistence/artifact-contract.yaml
+    documentation: .foundation/artifacts/foundations-persistence/README.md

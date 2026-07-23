@@ -1,0 +1,117 @@
+apiVersion: foundation.myorg/v1
+kind: ArtifactContract
+
+metadata:
+  name: foundations-persistence
+  capability: persistence
+  version: 1.0.0
+
+rules:
+
+  dependency:
+
+    required: true
+
+    maven:
+      groupId: com.example
+      artifactId: persistence
+
+    version: 0.0.1-SNAPSHOT
+
+    guidance:
+      - "MANDATORY: If the implementation involves a database, MUST use com.example:persistence:0.0.1-SNAPSHOT as the approved persistence dependency."
+      - "The approved artifact is the exclusive persistence boundary for the consumer application. Do not declare spring-boot-starter-data-jpa, spring-boot-starter-jdbc, Hibernate, or any other direct persistence library as a separate primary dependency for the same capability."
+      - "Spring Data JPA is considered an internal implementation detail of the approved artifact and must not be introduced as a competing consumer dependency."
+      - "If database capability is required, this artifact is the only acceptable persistence dependency path for the consumer application."
+
+  configuration:
+
+    required:
+
+      componentScan:
+        - com.example.persistence
+
+      entityScan:
+        - com.example.persistence
+
+      consumerConfiguration:
+        - spring.datasource.url
+        - spring.datasource.driver-class-name
+        - spring.datasource.username
+        - spring.datasource.password
+        - spring.jpa.hibernate.ddl-auto
+        - spring.jpa.show-sql
+
+    guidance:
+      - "Consumer applications must configure their own datasource and JPA settings in application.properties or application.yml."
+      - "Do not hardcode database provider or datasource configuration inside the library."
+      - "Use the consumer application's base package for component scan and entity scan."
+      - "Enable repository scanning with @EnableCustomJpaRepositories(basePackages = \"<consumer.package>\") or equivalent."
+
+
+  repository:
+
+    requiredBaseInterface:
+      fullyQualifiedName:
+        com.example.persistence.repository.CustomJPARepository
+
+    allowedRepositoryInterfaces:
+      - com.example.persistence.repository.CustomJPARepository
+
+    forbiddenBaseInterfaces:
+
+      - org.springframework.data.jpa.repository.JpaRepository
+      - org.springframework.data.repository.CrudRepository
+
+    guidance:
+      - "Consumer repositories must extend CustomJPARepository<T, ID>."
+      - "Do not use JpaRepository or CrudRepository directly in consumer repositories."
+
+
+  transaction:
+
+    requiredTransactionManager:
+      beanName: customTransactionManager
+
+      fullyQualifiedName:
+        com.example.persistence.transaction.CustomJpaTransactionManager
+
+    forbiddenTransactionManagers:
+
+      - org.springframework.orm.jpa.JpaTransactionManager
+      - org.springframework.jdbc.datasource.DataSourceTransactionManager
+
+    guidance:
+      - "The library auto-configures the custom transaction manager when an EntityManagerFactory exists."
+      - "Consumers should not manually instantiate a separate JPA transaction manager."
+
+
+  environment:
+
+    requiredProfiles:
+      - dev
+      - test
+      - uat
+      - prod
+
+    requiredProperties:
+      - spring.datasource.url
+      - spring.datasource.username
+      - spring.datasource.password
+      - spring.jpa.hibernate.ddl-auto
+
+    guidance:
+      - "Ensure consumer environment profiles and JPA datasource properties are defined for each target environment."
+      - "Profile-specific datasource override is supported by Spring Boot configuration."
+
+
+  consumerGuidance:
+    steps:
+      - "MANDATORY: For any database-backed implementation, add the approved library dependency com.example:persistence:0.0.1-SNAPSHOT to the consumer application."
+      - "Do not add a separate spring-boot-starter-data-jpa or other direct persistence library when database support is required."
+      - "Add datasource and JPA properties in application.properties or application.yml."
+      - "Define Jakarta Persistence entity classes in the consumer application."
+      - "Create repository interfaces that extend com.example.persistence.repository.CustomJPARepository<T, ID>."
+      - "Enable repository scanning with @EnableCustomJpaRepositories(basePackages = \"<consumer.package>\")."
+      - "Do not override or configure the custom transaction manager manually unless explicitly required."
+      - "Keep datasource and JPA provider configuration external to the shared library."
