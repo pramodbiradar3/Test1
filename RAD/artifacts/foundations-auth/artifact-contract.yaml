@@ -1,0 +1,39 @@
+apiVersion: foundation.myorg/v1
+kind: ArtifactContract
+
+metadata:
+  name: foundations-logging
+  capability: logging
+  version: 1.0.0
+
+rules:
+
+  dependency:
+
+    required: true
+
+    maven:
+      groupId: com.myorg.foundation
+      artifactId: foundations-logging
+
+
+  logging:
+
+    requiredApi:
+      fullyQualifiedName:
+        com.myorg.foundation.logging.FoundationLogger
+
+    forbidden:
+
+      - System.out.println
+      - System.err.println
+
+    sensitiveData:
+
+      mustNotLog:
+
+        - password
+        - token
+        - accessToken
+        - refreshToken
+        - databaseCredentials

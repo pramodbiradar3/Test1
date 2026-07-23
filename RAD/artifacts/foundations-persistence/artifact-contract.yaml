@@ -1,0 +1,83 @@
+apiVersion: foundation.myorg/v1
+kind: ArtifactContract
+
+metadata:
+  name: foundations-persistence
+  capability: persistence
+  version: 1.0.0
+
+rules:
+
+  dependency:
+
+    required: true
+
+    maven:
+      groupId: com.myorg.foundation
+      artifactId: foundations-persistence
+
+    version:
+      managedBy: foundation-bom
+
+
+  configuration:
+
+    required:
+
+      componentScan:
+        - com.myorg.foundation.persistence
+
+      entityScan:
+        - com.myorg.foundation.persistence.entity
+
+      autoConfigurationExclusions:
+        - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
+
+  repository:
+
+    requiredBaseInterface:
+      fullyQualifiedName:
+        com.myorg.foundation.persistence.JpaFoundationRepository
+
+    forbiddenBaseInterfaces:
+
+      - org.springframework.data.jpa.repository.JpaRepository
+      - org.springframework.data.repository.CrudRepository
+
+
+  transaction:
+
+    requiredTransactionManager:
+      beanName: foundationTransactionManager
+
+      fullyQualifiedName:
+        com.myorg.foundation.persistence.FoundationTransactionManager
+
+    forbiddenTransactionManagers:
+
+      - org.springframework.orm.jpa.JpaTransactionManager
+      - org.springframework.jdbc.datasource.DataSourceTransactionManager
+
+
+  environment:
+
+    requiredProfiles:
+      - dev
+      - test
+      - uat
+      - prod
+
+    requiredProperties:
+      - spring.datasource.url
+      - spring.datasource.username
+      - spring.datasource.password
+
+
+  additionalDependencies:
+
+    allowedOnlyWhen:
+      - capabilityNotProvidedByFoundationsPersistence
+
+    ifRequired:
+      explainReason: true
