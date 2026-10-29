@@ -1,0 +1,161 @@
+openapi: 3.1.0
+
+info:
+  title: Brahma Case API
+  version: "1.0.0"
+  description: >
+    REST API contract for retrieving Case entity information.
+    Confirm all illustrative paths, fields, and examples against
+    the actual Brahma service before implementation.
+
+servers:
+  - url: https://brahma-dev.example.com/api
+    description: DEV - placeholder URL
+    x-environment: dev
+
+  - url: https://brahma-sit.example.com/api
+    description: SIT - placeholder URL
+    x-environment: sit
+
+  - url: https://brahma-uat.example.com/api
+    description: UAT - placeholder URL
+    x-environment: uat
+
+  - url: https://brahma-prod.example.com/api
+    description: PROD - placeholder URL
+    x-environment: prod
+
+tags:
+  - name: Cases
+    description: Case entity operations
+
+paths:
+  /cases/{caseId}:
+    get:
+      operationId: getCaseById
+      tags:
+        - Cases
+      summary: Retrieve a case by ID
+      description: >
+        Illustrative read operation. Confirm the actual endpoint
+        and response fields with the Brahma service owner.
+      x-catalogue:
+        serviceId: brahma
+        capability: case.read
+        dataset: Case
+        access: read
+        approved: true
+
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          description: Identifier of the case to retrieve
+          schema:
+            type: string
+          example: CASE-10001
+
+      security:
+        - bearerAuth: []
+
+      responses:
+        "200":
+          description: Case retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Case"
+              example:
+                caseId: CASE-10001
+                status: OPEN
+                title: Customer service request
+
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: INVALID_REQUEST
+                message: Invalid case identifier
+
+        "401":
+          description: Authentication is missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: UNAUTHORIZED
+                message: Authentication required
+
+        "403":
+          description: The caller is not authorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: FORBIDDEN
+                message: Access denied
+
+        "404":
+          description: Case not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: CASE_NOT_FOUND
+                message: Case not found
+
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: INTERNAL_ERROR
+                message: An unexpected error occurred
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Case:
+      type: object
+      description: Illustrative Case response model
+      required:
+        - caseId
+        - status
+      properties:
+        caseId:
+          type: string
+          description: Unique case identifier
+        status:
+          type: string
+          description: Current case status
+          examples:
+            - OPEN
+            - CLOSED
+            - IN_PROGRESS
+        title:
+          type: string
+          description: Case title or summary
+
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
