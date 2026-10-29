@@ -1,12 +1,20 @@
-# Service Catalogue
+# Enterprise Service Catalogue
 
-## Overview
+## 1. Overview
 
-The Service Catalogue is a centralized repository of enterprise service contracts. It enables developers and AI coding assistants, including GitHub Copilot, to discover available services, understand their capabilities, and integrate with approved APIs using documented contracts.
+The Enterprise Service Catalogue provides a centralized, repository-based inventory of approved enterprise services and their API contracts.
 
-The catalogue supports services using different API protocols, including REST and GraphQL.
+It is intended to help developers and AI coding assistants, including GitHub Copilot Agent Mode in IntelliJ IDEA, discover existing APIs before implementing new integrations.
 
-## Repository Structure
+The catalogue supports REST and GraphQL services and provides:
+
+- A central registry of available services, datasets, capabilities, and contract locations.
+- Service-specific API contracts describing available operations, parameters, and responses.
+- Environment-specific base URLs for development, SIT, UAT, and production.
+- Sample requests and responses to guide implementation.
+- Copilot instructions for discovering and consuming documented APIs consistently.
+
+## 2. Repository structure
 
 ```text
 service-catalogue/
@@ -15,92 +23,106 @@ service-catalogue/
 ├── .github/
 │   └── copilot-instructions.md
 └── services/
-    └── <service-id>/
+    ├── brahma/
+    │   ├── service-contract.yaml
+    │   └── README.md
+    └── alekha/
         ├── service-contract.yaml
         └── README.md
 ```
 
-## Catalogue Components
+## 3. Catalogue components
 
 ### `catalogue.yaml`
 
-The central registry of available services. It provides each service's identifier, name, description, protocol, contract location, documentation location, datasets, and supported capabilities.
-
-### `services/<service-id>/service-contract.yaml`
-
-Contains the machine-readable contract for an individual service, including:
-
-- Service metadata and API protocol
-- Environment-specific base URLs
-- Available endpoints or GraphQL operations
-- Request parameters and arguments
-- Request and response schemas
-- Sample requests and responses
-- Authentication requirements
-- Approved capabilities and usage restrictions
-
-The contract format depends on the service protocol. REST services can use OpenAPI, while GraphQL services can document their operations and schema information in YAML.
-
-### `services/<service-id>/README.md`
-
-Contains service-specific documentation, including business context, dataset descriptions, relationships, usage guidance, limitations, and ownership information.
+The central registry of services. Each entry identifies a service, its protocol, datasets, capabilities, supported environments, contract location, and documentation location.
 
 ### `.github/copilot-instructions.md`
 
-Provides repository-level instructions to help GitHub Copilot discover the appropriate service, follow its contract, select the correct environment, and generate integrations consistent with the documented capabilities.
+Provides repository-specific guidance for GitHub Copilot. It instructs Copilot to consult the registry and service contracts before writing integration code and not to invent undocumented endpoints, operations, or fields.
 
-## How to Use the Catalogue
+### `services/<service-name>/service-contract.yaml`
 
-1. Consult `catalogue.yaml` to discover the relevant service.
-2. Read the service-specific README to understand its business context.
-3. Review `service-contract.yaml` to identify the appropriate operation.
-4. Select the environment appropriate to the development or deployment task.
-5. Use the documented parameters, request examples, response schemas, and authentication requirements.
-6. Follow the service's authorization and data-access policies.
+Contains the service's API contract, environment configuration, authentication expectations, supported operations, and request/response examples.
 
-## Environment Conventions
+REST services use OpenAPI. GraphQL services use a catalogue-specific YAML representation of documented GraphQL operations.
 
-Services may define the following environments:
+### `services/<service-name>/README.md`
 
-| Environment | Purpose |
-|---|---|
-| `dev` | Development and initial integration |
-| `sit` | System integration testing |
-| `uat` | User acceptance testing |
-| `prod` | Production |
+Contains service-specific usage guidance, capabilities, environment details, and important integration considerations.
 
-Use only the configured environment URLs. Never invent a base URL or assume that endpoints and permissions are identical across environments.
+## 4. Currently catalogued services
 
-## Contract and Documentation Guidelines
+| Service | Protocol | Available datasets |
+|---|---|---|
+| Brahma | REST | Case |
+| Alekha | GraphQL | Case, Task, Client, Events |
 
-- Maintain one service directory per registered service.
-- Keep each service's contract and README in its own directory.
-- Document operations, required parameters, expected responses, and representative examples.
-- Use non-production sample data.
-- Keep service metadata and the central registry consistent.
-- Document only verified capabilities and supported operations.
-- Avoid storing credentials, access tokens, or other secrets in the repository.
+The service-specific documentation and contracts are the authoritative references for the operations and fields documented in this repository.
 
-## Security and Governance
+## 5. Environment configuration
 
-The catalogue documents service capabilities and intended usage. It does not itself enforce API permissions.
+Each service contract documents its base URL for the following environments:
 
-Actual authentication, authorization, data filtering, and read-only restrictions must be enforced by the service or its API gateway.
+- **DEV:** Development
+- **SIT:** System Integration Testing
+- **UAT:** User Acceptance Testing
+- **PROD:** Production
 
-Use approved operations only. If a required capability or operation is missing from the catalogue, confirm the requirement with the service owner before implementing it.
+The example URLs in this repository are placeholders. Replace them with the actual approved service URLs before using the contracts in an application.
 
-## Adding or Updating a Service
+Environment selection should be explicit in application configuration. Avoid hardcoding environment-specific URLs throughout application code.
 
-1. Create or update the service directory under `services/`.
-2. Add or update `service-contract.yaml`.
-3. Add or update the service-specific `README.md`.
-4. Register the service or update its metadata in `catalogue.yaml`.
-5. Review environment URLs, examples, security requirements, and documented capabilities.
-6. Submit the changes for review according to the repository's contribution process.
+## 6. Guidelines for API consumers
 
-## Important Notes
+1. Read `catalogue.yaml` to discover the appropriate service.
+2. Read the service-specific README for integration guidance.
+3. Consult `service-contract.yaml` for the documented API operations, fields, parameters, and response formats.
+4. Use the documented authentication mechanism and approved environment configuration.
+5. Follow the documented capability and access restrictions.
+6. Handle errors and unexpected responses appropriately.
+7. Do not create duplicate service integrations when an appropriate catalogued API already exists.
 
-- Example URLs and payloads must be verified before production use.
-- The service contract is the reference for documented API behavior.
-- Changes to API capabilities should be reflected in both the service contract and central registry.
-- The catalogue should not contain production secrets or sensitive real-world response samples.
+For Copilot-assisted development, follow `.github/copilot-instructions.md` in addition to these guidelines.
+
+## 7. Adding a new service
+
+To add a service:
+
+1. Create a directory under `services/` using the service's agreed identifier.
+2. Add `service-contract.yaml` with the appropriate REST or GraphQL contract representation.
+3. Add a service-specific `README.md`.
+4. Register the service in `catalogue.yaml`.
+5. Document its supported environments, datasets, capabilities, authentication requirements, operations, and sample requests and responses.
+6. Ensure the contract reflects the actual service API and has been reviewed by the service owner.
+7. Update the Copilot instructions only if the catalogue's general discovery or consumption rules change.
+
+## 8. Updating an existing service
+
+When a service changes, update its contract and service-specific README. Keep the registry aligned with the supported capabilities and datasets.
+
+Document breaking changes, deprecated operations, changed fields, and environment URL changes where applicable. Coordinate changes with the service owner.
+
+## 9. Security and governance
+
+The catalogue documents API discovery and intended usage; it does not itself enforce authorization or access control.
+
+- Never store credentials, bearer tokens, passwords, private keys, or other secrets in this repository.
+- Use approved identity and token-management mechanisms.
+- Use non-production example data in documentation.
+- Follow service-owner authorization requirements and organizational security policies.
+- Do not assume that an operation is authorized merely because it appears in the catalogue.
+- Production access must follow the applicable organizational approval process.
+
+Copilot instructions are guidance for AI-assisted development, not a security boundary. Actual access restrictions must be enforced by the service, identity provider, and runtime controls.
+
+## 10. Source of truth
+
+Use the following order when implementing an integration:
+
+1. The actual service schema and authoritative service-owner documentation.
+2. The service's approved contract in this repository.
+3. The service-specific README.
+4. The central catalogue metadata.
+
+If the contract and the actual API disagree, confirm the correct behavior with the service owner before implementing the integration.
