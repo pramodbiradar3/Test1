@@ -1,0 +1,252 @@
+contractVersion: "1.0"
+
+service:
+  id: alekha
+  name: Alekha
+  protocol: GraphQL
+  description: Enterprise GraphQL API for Case, Task, Client, and Events
+  endpointPath: /graphql
+
+environments:
+  dev:
+    baseUrl: https://alekha-dev.example.com/graphql
+  sit:
+    baseUrl: https://alekha-sit.example.com/graphql
+  uat:
+    baseUrl: https://alekha-uat.example.com/graphql
+  prod:
+    baseUrl: https://alekha-prod.example.com/graphql
+
+authentication:
+  type: bearer
+  header: Authorization
+  format: "Bearer <access-token>"
+  note: Confirm the actual authentication mechanism with the service owner.
+
+policies:
+  readOnlyByDefault: true
+  allowMutations: false
+  requireDocumentedOperations: true
+
+datasets:
+  - name: Case
+    description: Case entity information
+    capabilities:
+      - case.read
+
+  - name: Task
+    description: Task information
+    capabilities:
+      - task.read
+
+  - name: Client
+    description: Client information
+    capabilities:
+      - client.read
+
+  - name: Events
+    description: Event information
+    capabilities:
+      - events.read
+
+operations:
+  - operationId: GetCase
+    name: GetCase
+    type: query
+    dataset: Case
+    capability: case.read
+    access: read
+    description: Retrieve a case by its identifier.
+
+    arguments:
+      - name: caseId
+        type: ID!
+        required: true
+        description: Identifier of the case
+
+    graphql: |
+      query GetCase($caseId: ID!) {
+        case(id: $caseId) {
+          id
+          status
+          title
+        }
+      }
+
+    sampleRequest:
+      method: POST
+      path: /graphql
+      headers:
+        Content-Type: application/json
+        Authorization: Bearer <access-token>
+      body:
+        operationName: GetCase
+        query: |
+          query GetCase($caseId: ID!) {
+            case(id: $caseId) {
+              id
+              status
+              title
+            }
+          }
+        variables:
+          caseId: CASE-10001
+
+    sampleResponse:
+      statusCode: 200
+      body:
+        data:
+          case:
+            id: CASE-10001
+            status: OPEN
+            title: Customer service request
+
+  - operationId: GetTasks
+    name: GetTasks
+    type: query
+    dataset: Task
+    capability: task.read
+    access: read
+    description: Retrieve tasks associated with a case.
+
+    arguments:
+      - name: caseId
+        type: ID!
+        required: true
+        description: Identifier of the associated case
+
+    graphql: |
+      query GetTasks($caseId: ID!) {
+        tasks(caseId: $caseId) {
+          id
+          status
+          title
+        }
+      }
+
+    sampleRequest:
+      method: POST
+      path: /graphql
+      headers:
+        Content-Type: application/json
+        Authorization: Bearer <access-token>
+      body:
+        operationName: GetTasks
+        query: |
+          query GetTasks($caseId: ID!) {
+            tasks(caseId: $caseId) {
+              id
+              status
+              title
+            }
+          }
+        variables:
+          caseId: CASE-10001
+
+    sampleResponse:
+      statusCode: 200
+      body:
+        data:
+          tasks:
+            - id: TASK-20001
+              status: IN_PROGRESS
+              title: Review case details
+
+  - operationId: GetClient
+    name: GetClient
+    type: query
+    dataset: Client
+    capability: client.read
+    access: read
+    description: Retrieve a client by its identifier.
+
+    arguments:
+      - name: clientId
+        type: ID!
+        required: true
+        description: Identifier of the client
+
+    graphql: |
+      query GetClient($clientId: ID!) {
+        client(id: $clientId) {
+          id
+          name
+        }
+      }
+
+    sampleRequest:
+      method: POST
+      path: /graphql
+      headers:
+        Content-Type: application/json
+        Authorization: Bearer <access-token>
+      body:
+        operationName: GetClient
+        query: |
+          query GetClient($clientId: ID!) {
+            client(id: $clientId) {
+              id
+              name
+            }
+          }
+        variables:
+          clientId: CLIENT-30001
+
+    sampleResponse:
+      statusCode: 200
+      body:
+        data:
+          client:
+            id: CLIENT-30001
+            name: Example Client
+
+  - operationId: GetEvents
+    name: GetEvents
+    type: query
+    dataset: Events
+    capability: events.read
+    access: read
+    description: Retrieve events associated with a case.
+
+    arguments:
+      - name: caseId
+        type: ID!
+        required: true
+        description: Identifier of the associated case
+
+    graphql: |
+      query GetEvents($caseId: ID!) {
+        events(caseId: $caseId) {
+          id
+          type
+          occurredAt
+        }
+      }
+
+    sampleRequest:
+      method: POST
+      path: /graphql
+      headers:
+        Content-Type: application/json
+        Authorization: Bearer <access-token>
+      body:
+        operationName: GetEvents
+        query: |
+          query GetEvents($caseId: ID!) {
+            events(caseId: $caseId) {
+              id
+              type
+              occurredAt
+            }
+          }
+        variables:
+          caseId: CASE-10001
+
+    sampleResponse:
+      statusCode: 200
+      body:
+        data:
+          events:
+            - id: EVENT-40001
+              type: CASE_CREATED
+              occurredAt: "2026-10-29T10:30:00Z"
