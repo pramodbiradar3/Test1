@@ -1,0 +1,59 @@
+catalogue:
+  name: service-catalogue
+  version: "1.0.0"
+  description: Anvaya API service catalogue
+
+services:
+  - id: brahma
+    name: Brahma
+    description: Case related REST service
+    protocol: REST
+    contract: services/brahma/service-contract.yaml
+    documentation: services/brahma/README.md
+    datasets:
+      - Case
+    capabilities:
+      - case.read
+    environments:
+      - dev
+      - qa
+      - preprod
+      - prod
+
+  - id: karm
+    name: Karm
+    description: Task related REST service
+    protocol: REST
+    contract: services/Karm/service-contract.yaml
+    documentation: services/Karm/README.md
+    datasets:
+      - Task
+    capabilities:
+      - task.read
+    environments:
+      - dev
+      - qa
+      - preprod
+      - prod
+
+  - id: alekha
+    name: Alekha
+    description: GraphQL service exposing enterprise datasets
+    protocol: GraphQL
+    contract: services/alekha/service-contract.yaml
+    documentation: services/alekha/README.md
+    datasets:
+      - Case
+      - Task
+      - Client
+      - Events
+    capabilities:
+      - case.read
+      - task.read
+      - client.read
+      - events.read
+    environments:
+      - dev
+      - qa
+      - preprod
+      - prod
