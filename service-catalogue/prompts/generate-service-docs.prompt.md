@@ -1,41 +1,38 @@
 ---
-description: Generate service README.md and service-contract.yaml
+description: Generate isolated service documentation and API contract
 ---
 
 # Generate Service Documentation
 
-Analyze the current service repository and generate exactly two files:
-- `README.md`
-- `service-contract.yaml`
+Analyze the current repository and generate exactly two files inside a new directory named `service-catalogue-docs/`:
+
+- `service-catalogue-docs/README.md`
+- `service-catalogue-docs/service-contract.yaml`
 
 ## Instructions
 
-1. Inspect only relevant API controllers, GraphQL schemas, existing API specifications, DTOs, exception handlers, security configuration, application configuration, and focused tests. Do not scan build output, generated code, dependencies, or unrelated files.
+1. Inspect only relevant API controllers, GraphQL schemas, existing API specifications, DTOs, security/configuration files, and focused tests. Skip build output, generated code, dependencies, and unrelated files.
 
-2. Reuse existing documentation and specifications. Stop exploring once sufficient evidence is available.
+2. Do not overwrite or modify the service's existing README, source code, or any other files.
 
-3. Generate `README.md` containing:
-   - Service purpose and protocol
+3. Generate `service-catalogue-docs/README.md` containing:
+   - Service name, purpose, and protocol
    - Datasets and capabilities
-   - Environment URLs, if known
-   - Authentication
+   - DEV, QA, UAT, and PROD URLs, if known
+   - Authentication requirements
    - Available operations
-   - Brief usage guidance and security considerations
+   - Brief usage and security guidance
 
-4. Generate `service-contract.yaml`:
-   - **REST:** Valid OpenAPI 3.1.0 document, including servers, paths, parameters, request/response schemas, status codes, security, and examples.
-   - **GraphQL:** YAML containing service metadata, environments, authentication, datasets, capabilities, and documented operations. Each operation must include its complete GraphQL document, arguments, `sampleRequest`, and `sampleResponse`.
+4. Generate `service-catalogue-docs/service-contract.yaml`:
+   - **REST:** Valid OpenAPI 3.1.0 with servers, paths, parameters, request/response schemas, status codes, security, and examples.
+   - **GraphQL:** YAML with service metadata, environments, authentication, datasets, capabilities, and documented operations. Each operation must include arguments, the complete GraphQL document, `sampleRequest`, and `sampleResponse`.
 
-5. Use actual implementation and authoritative specifications as the source of truth. Do not invent endpoints, fields, arguments, URLs, or authentication mechanisms. Mark unavailable information as `TODO`.
+5. Use the actual implementation and authoritative specifications. Do not invent endpoints, fields, arguments, URLs, or authentication mechanisms. Mark unavailable information as `TODO`.
 
-6. Use non-sensitive examples. Never include credentials, tokens, or production data.
+6. Use concise, non-sensitive examples. Never include credentials, tokens, or production data.
 
-7. Preserve useful existing content. Create or update only `README.md` and `service-contract.yaml`. Do not modify source code, other documentation, dependencies, CI pipelines, or any other files.
+7. If `service-catalogue-docs/` already exists, inspect and update only the two target files. Preserve unrelated contents.
 
-8. Do not generate ZIP files, validation schemas, utilities, or additional files.
+8. Do not create ZIP files, validation schemas, utilities, CI pipelines, or additional files.
 
-9. Keep both files concise. Avoid duplicate documentation, unnecessary repository summaries, and lengthy explanations.
-
-## Final response
-
-Briefly report the two files created or updated and any unresolved `TODO` items. Do not claim unverified details are confirmed.
+9. Avoid duplicate content
